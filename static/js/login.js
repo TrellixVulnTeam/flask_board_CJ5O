@@ -6,7 +6,8 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 if(response == "Success"){
-                    window.location.href = 'Home';
+                    location.replace('Home');
+//                    window.location.href = 'Home';
                 }else{
                     alert('Fail to Login!');
                 }

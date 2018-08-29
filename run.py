@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request, json, session
 from flaskext.mysql import MySQL
+from flask_mail import Mail, Message
+import config
 
 mysql = MySQL()
 app = Flask('__name__')
-app.secret_key = 'flask app secret key'
-
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
-app.config['MYSQL_DATABASE_DB'] = 'flask_test'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
-
+# db 초기화
+mysql.init_app(config.db_config(app))
+# mail 초기화
+mail = Mail(config.mail_config(app))
 
 @app.route('/')
 def login():
@@ -51,6 +49,15 @@ def login_process():
     # return json.dumps({ 'id': _id, 'pw': _pw })
 
 
+@app.route('/sendMail', methods=['POST'])
+def send_mail():
+    msg = Message('Test Title', sender='qkrdbsgh0921@gmail.com', recipients=['qkrdbsgh0921@gmail.com'], body='Test')
+    mail.send(msg)
+
+    return "Success"
+
+
+# func: session을 확인하여 비정상적 로그인은 Login화면으로 이동
 def check_valid(url):
     if session.get('LoginID'):
         return render_template(url)
