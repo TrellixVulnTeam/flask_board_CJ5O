@@ -1,0 +1,10 @@
+{% extends "Layout.html" %}
+{% block content %}
+    <div>Processing the logout. Please waiting...</div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            // 뒤로가기 방지를 위해 별도의 Signout.html 생성
+            Common.Signout();
+        });
+    </script>
+{% endblock %}

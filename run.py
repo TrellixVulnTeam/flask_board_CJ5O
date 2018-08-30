@@ -10,6 +10,7 @@ mysql.init_app(config.db_config(app))
 # mail 초기화
 mail = Mail(config.mail_config(app))
 
+
 @app.route('/')
 def login():
     session.clear()
@@ -31,33 +32,45 @@ def contact():
     return check_valid('Contact.html')
 
 
+@app.route('/Signout')
+def signout():
+    session.clear()
+    return render_template('Signout.html')
+
+
+# Func : Login Process(ID/PW확인, Session저장)
 @app.route('/loginProcess', methods=['POST'])
 def login_process():
     _id = request.form['inputID']
     _pw = request.form['inputPassword']
-
+    _ip = request.remote_addr
     data = login_db_conn(_id, _pw)
 
     if len(data) > 0:
-        result = "Success"
+        result = {
+            'is_success': True,
+            'ip': _ip
+        }
         session['LoginID'] = data[0][0]
         session['LoginPW'] = data[0][1]
+        session['IPAddress'] = _ip
     else:
-        result = "Fail"
+        result = {
+            'is_success': False,
+            'ip': ''
+        }
+    return json.dumps(result)
 
-    return result
-    # return json.dumps({ 'id': _id, 'pw': _pw })
 
-
+# Func : 받는사람과 내용을 저장하여 메일전송
 @app.route('/sendMail', methods=['POST'])
 def send_mail():
     msg = Message('Test Title', sender='qkrdbsgh0921@gmail.com', recipients=['qkrdbsgh0921@gmail.com'], body='Test')
     mail.send(msg)
-
     return "Success"
 
 
-# func: session을 확인하여 비정상적 로그인은 Login화면으로 이동
+# Func: session을 확인하여 비정상적 로그인은 Login화면으로 이동
 def check_valid(url):
     if session.get('LoginID'):
         return render_template(url)
@@ -65,6 +78,7 @@ def check_valid(url):
         return render_template('Login.html')
 
 
+# Func: Login Procedure 호출
 def login_db_conn(_id, _pw):
     con = mysql.connect()
     cursor = con.cursor()
@@ -74,5 +88,4 @@ def login_db_conn(_id, _pw):
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    app.run(debug=True)

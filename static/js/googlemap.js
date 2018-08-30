@@ -39,10 +39,3 @@
         infowindow.open(map, marker);
      });
  }
-
-$(document).ready(function(){
-    console.log($('#homdDiv').length);
-    if($('#homdDiv').length > 0){
-        initialize();
-    };
-})

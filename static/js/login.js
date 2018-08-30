@@ -5,11 +5,12 @@ $(function() {
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {
-                if(response == "Success"){
+                res = JSON.parse(response);
+                if(res['is_success']){
+                    console.log('Login IP: ', res['ip']);
                     location.replace('Home');
-//                    window.location.href = 'Home';
                 }else{
-                    alert('Fail to Login!');
+                    alert('Fail to Login!')
                 }
             },
             error: function(error) {
